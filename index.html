@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Advanced Responsive Navigation with Overlay</title>
+  <style>
+    :root {
+      --accent: #00bcd4;
+      --text-color: #333;
+      --hover: #aaa;
+      --transition-speed: 0.3s;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Desktop Navigation */
+    .desktop-nav {
+      background-color: white;
+      padding: 1rem 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 10;
+    }
+
+    .desktop-nav ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      gap: 1.5rem;
+      justify-content: flex-end;
+    }
+
+    .desktop-nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all var(--transition-speed) ease;
+      position: relative;
+    }
+
+    .desktop-nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--accent);
+      transition: width var(--transition-speed) ease;
+    }
+
+    .desktop-nav a:hover::after {
+      width: 100%;
+    }
+
+    .desktop-nav a:hover {
+      color: var(--accent);
+    }
+
+    .desktop-nav a.active-link {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .desktop-nav a.active-link::after {
+      width: 100%;
+    }
+    .desktop-nav .home-list {
+      margin-right: auto;
+
+    }
+
+    /* Mobile Toggle Button */
+    #menu-toggle {
+      display: none;
+      font-size: 28px;
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      z-index: 30;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-color);
+      transition: transform 0.3s ease;
+    }
+
+    #menu-toggle.active {
+      transform: rotate(90deg);
+      color: var(--accent);
+    }
+
+    /* Overlay */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 15;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-speed) ease;
+      backdrop-filter: blur(3px);
+    }
+
+    #overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Mobile Navigation */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(280px, 100%);
+      background-color: white;
+      z-index: 20;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transform: translateX(100%);
+      transition: transform var(--transition-speed) ease;
+      padding: 80px 20px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mobile-nav.active {
+      transform: translateX(0);
+    }
+
+    .mobile-nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .mobile-nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      padding: 12px 16px;
+      display: block;
+      border-radius: 4px;
+      transition: all var(--transition-speed) ease;
+      font-size: 18px;
+    }
+
+    .mobile-nav a:hover {
+      background-color: rgba(0, 188, 212, 0.1);
+      color: var(--accent);
+    }
+
+    .mobile-nav a.active-link {
+      background-color: rgba(0, 188, 212, 0.2);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Responsive Styles */
+    @media screen and (max-width: 768px) {
+      .desktop-nav {
+        display:none  ;
+      }
+      
+      #menu-toggle {
+        display: block;
+      }
+    }
+
+    @media screen and (min-width: 769px) {
+      .mobile-nav {
+        display: none;
+      }
+    }
+
+    /* Content styles */
+    main {
+      padding: 5rem;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+  
+  <div id="overlay"></div>
+
+  <!-- Desktop Navigation -->
+  <nav class="desktop-nav">
+    <ul>
+      <li class="home-list"><a href="#" class="active-link">Home</a></li>
+      <li><a href="#">Courses</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav">
+    <ul>
+      <li><a href="#" class="active-link">Home</a></li>
+      <li><a href="#">Courses</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>Welcome to Our Website</h1>
+    <p>Resize the browser window to see the responsive navigation in action.</p>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('menu-toggle');
+      const mobileNav = document.querySelector('.mobile-nav');
+      const overlay = document.getElementById('overlay');
+      const navLinks = document.querySelectorAll('.mobile-nav a');
+
+      // Toggle menu open/close
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('active');
+        mobileNav.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        // Toggle body scroll
+        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+      });
+
+      // Close menu when clicking overlay
+      overlay.addEventListener('click', () => {
+        toggle.classList.remove('active');
+        mobileNav.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      // Close menu when clicking a link (optional)
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          toggle.classList.remove('active');
+          mobileNav.classList.remove('active');
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+
+      // Add keyboard accessibility
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+          toggle.classList.remove('active');
+          mobileNav.classList.remove('active');
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
